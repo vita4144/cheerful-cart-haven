@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Grid3x3, List } from "lucide-react";
 import { Header } from "@/components/Header";
 import { PRODUCTS, useShop } from "@/lib/shop-context";
@@ -16,24 +16,59 @@ export const Route = createFileRoute("/")({
 
 const PAGE_SIZE = 12;
 
+type SortKey = "featured" | "price-asc" | "price-desc" | "name-asc" | "name-desc";
+
+const CATEGORIES = Array.from(new Set(PRODUCTS.map((p) => p.category))).sort();
+
 function Catalogue() {
   const { addToCart } = useShop();
   const [view, setView] = useState<"grid" | "list">("grid");
   const [page, setPage] = useState(1);
+  const [category, setCategory] = useState<string>("all");
+  const [sort, setSort] = useState<SortKey>("featured");
+  const [search, setSearch] = useState("");
 
-  const totalPages = Math.ceil(PRODUCTS.length / PAGE_SIZE);
-  const start = (page - 1) * PAGE_SIZE;
-  const visible = PRODUCTS.slice(start, start + PAGE_SIZE);
+  const filtered = useMemo(() => {
+    let list = PRODUCTS.slice();
+    if (category !== "all") list = list.filter((p) => p.category === category);
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      list = list.filter((p) => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+    }
+    switch (sort) {
+      case "price-asc": list.sort((a, b) => a.price - b.price); break;
+      case "price-desc": list.sort((a, b) => b.price - a.price); break;
+      case "name-asc": list.sort((a, b) => a.name.localeCompare(b.name)); break;
+      case "name-desc": list.sort((a, b) => b.name.localeCompare(a.name)); break;
+    }
+    return list;
+  }, [category, sort, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const start = (safePage - 1) * PAGE_SIZE;
+  const visible = filtered.slice(start, start + PAGE_SIZE);
+  const rangeEnd = start + visible.length;
+
+  // Reset to page 1 when filters change the result count below current page
+  if (safePage !== page) setTimeout(() => setPage(safePage), 0);
+
+  const resetPage = <T,>(setter: (v: T) => void) => (v: T) => {
+    setter(v);
+    setPage(1);
+  };
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main className="mx-auto max-w-7xl px-6 py-10">
-        <div className="mb-8 flex items-end justify-between">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 className="text-3xl font-semibold tracking-tight">Catalogue</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {PRODUCTS.length} pieces — cabinets and standalone furniture
+            <p data-testid="results-summary" className="mt-1 text-sm text-muted-foreground">
+              {filtered.length === 0
+                ? "No items match your filters"
+                : `Showing ${start + 1}–${rangeEnd} of ${filtered.length} ${filtered.length === 1 ? "item" : "items"}`}
             </p>
           </div>
           <div className="flex gap-2" data-testid="view-toggle">
@@ -55,6 +90,42 @@ function Catalogue() {
             </button>
           </div>
         </div>
+
+        <div data-testid="filters" className="mb-6 grid gap-3 sm:grid-cols-[1fr_auto_auto]">
+          <input
+            data-testid="filter-search"
+            type="search"
+            placeholder="Search by name or category…"
+            value={search}
+            onChange={(e) => resetPage(setSearch)(e.target.value)}
+            className="rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-ring"
+          />
+          <select
+            data-testid="filter-category"
+            value={category}
+            onChange={(e) => resetPage(setCategory)(e.target.value)}
+            className="rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-ring"
+          >
+            <option value="all">All categories</option>
+            {CATEGORIES.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          <select
+            data-testid="filter-sort"
+            value={sort}
+            onChange={(e) => resetPage(setSort)(e.target.value as SortKey)}
+            className="rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-ring"
+          >
+            <option value="featured">Sort: Featured</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="name-asc">Name: A–Z</option>
+            <option value="name-desc">Name: Z–A</option>
+          </select>
+        </div>
+
+
 
         {view === "grid" ? (
           <div data-testid="product-grid" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
