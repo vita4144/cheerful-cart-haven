@@ -30,7 +30,7 @@ const IMAGES = [
   "1532323544230-7191fd51bc1b",
 ];
 
-const CATEGORIES = ["Wardrobe", "Commode", "Bookshelf", "Mudroom", "Walk-in Closet", "Cabinet"];
+const CATEGORIES = ["Wardrobe", "Drawer", "Bookshelf", "Mudroom", "Walk-in Closet", "Cabinet"];
 
 export const PRODUCTS: Product[] = Array.from({ length: 24 }, (_, i) => {
   const category = CATEGORIES[i % CATEGORIES.length];
