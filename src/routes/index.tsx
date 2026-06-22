@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Catalogue — Oakline Furniture" },
-      { name: "description", content: "Browse modern wardrobes, commodes, bookshelves, mudrooms and walk-in closets." },
+      { name: "description", content: "Browse modern wardrobes, drawers, bookshelves, mudrooms and walk-in closets." },
     ],
   }),
   component: Catalogue,
