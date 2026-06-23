@@ -1,6 +1,6 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, Minus, Plus } from "lucide-react";
+import { ArrowLeft, Check, Minus, Plus } from "lucide-react";
 import { Header } from "@/components/Header";
 import { PRODUCTS, useShop } from "@/lib/shop-context";
 
@@ -20,8 +20,7 @@ export const Route = createFileRoute("/product/$id")({
 function ProductPage() {
   const { id } = Route.useParams();
   const product = PRODUCTS.find((p) => p.id === Number(id));
-  const { addToCart } = useShop();
-  const navigate = useNavigate();
+  const { addToCart, cart } = useShop();
   const [qty, setQty] = useState(1);
 
   if (!product) {
