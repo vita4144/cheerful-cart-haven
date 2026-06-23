@@ -1,6 +1,6 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, Minus, Plus } from "lucide-react";
+import { ArrowLeft, Check, Minus, Plus } from "lucide-react";
 import { Header } from "@/components/Header";
 import { PRODUCTS, useShop } from "@/lib/shop-context";
 
@@ -20,8 +20,7 @@ export const Route = createFileRoute("/product/$id")({
 function ProductPage() {
   const { id } = Route.useParams();
   const product = PRODUCTS.find((p) => p.id === Number(id));
-  const { addToCart } = useShop();
-  const navigate = useNavigate();
+  const { addToCart, cart } = useShop();
   const [qty, setQty] = useState(1);
 
   if (!product) {
@@ -63,13 +62,20 @@ function ProductPage() {
               </div>
               <button
                 data-testid="detail-add-to-cart-btn"
-                onClick={() => {
-                  addToCart(product, qty);
-                  navigate({ to: "/cart" });
-                }}
-                className="rounded-md bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+                onClick={() => addToCart(product, qty)}
+                className={`inline-flex items-center gap-2 rounded-md px-6 py-2.5 text-sm font-medium transition-colors ${
+                  cart.some((i) => i.product.id === product.id)
+                    ? "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-primary text-primary-foreground hover:opacity-90"
+                }`}
               >
-                Add to Cart
+                {cart.some((i) => i.product.id === product.id) ? (
+                  <>
+                    <Check size={16} /> In your cart
+                  </>
+                ) : (
+                  "Add to Cart"
+                )}
               </button>
             </div>
           </div>
