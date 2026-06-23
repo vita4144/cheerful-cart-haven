@@ -9,10 +9,18 @@ export const Route = createFileRoute("/cart")({
 });
 
 function CartPage() {
-  const { cart, removeFromCart, updateQty, cartTotal } = useShop();
+  const { cart, removeFromCart, updateQty, cartTotal, user } = useShop();
   const navigate = useNavigate();
   const tax = cartTotal * 0.1;
   const total = cartTotal + tax;
+
+  const handleCheckout = () => {
+    if (!user) {
+      navigate({ to: "/login", search: { redirect: "/checkout" } });
+      return;
+    }
+    navigate({ to: "/checkout" });
+  };
 
   return (
     <div className="min-h-screen bg-background">
