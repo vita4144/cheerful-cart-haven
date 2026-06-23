@@ -71,7 +71,8 @@ function ProductPage() {
               >
                 {cart.some((i) => i.product.id === product.id) ? (
                   <>
-                    <Check size={16} /> In your cart
+                    <Check size={16} />
+                    <span>In your cart</span>
                   </>
                 ) : (
                   "Add to Cart"

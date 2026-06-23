@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Grid3x3, List } from "lucide-react";
+import { Check, Grid3x3, List } from "lucide-react";
 import { Header } from "@/components/Header";
 import { PRODUCTS, useShop } from "@/lib/shop-context";
 
@@ -21,7 +21,8 @@ type SortKey = "featured" | "price-asc" | "price-desc" | "name-asc" | "name-desc
 const CATEGORIES = Array.from(new Set(PRODUCTS.map((p) => p.category))).sort();
 
 function Catalogue() {
-  const { addToCart } = useShop();
+  const { addToCart, cart } = useShop();
+  const inCart = (id: number) => cart.some((i) => i.product.id === id);
   const [view, setView] = useState<"grid" | "list">("grid");
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState<string>("all");
@@ -148,9 +149,20 @@ function Catalogue() {
                     <button
                       data-testid={`add-to-cart-${p.id}`}
                       onClick={() => addToCart(p)}
-                      className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:opacity-90"
+                      className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors ${
+                        inCart(p.id)
+                          ? "bg-green-600 text-white hover:bg-green-700"
+                          : "bg-primary text-primary-foreground hover:opacity-90"
+                      }`}
                     >
-                      Add to Cart
+                      {inCart(p.id) ? (
+                        <>
+                          <Check size={14} />
+                          <span>In your cart</span>
+                        </>
+                      ) : (
+                        "Add to Cart"
+                      )}
                     </button>
                   </div>
                 </div>
@@ -183,9 +195,20 @@ function Catalogue() {
                       <button
                         data-testid={`add-to-cart-${p.id}`}
                         onClick={() => addToCart(p)}
-                        className="rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground hover:opacity-90"
+                        className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-colors ${
+                          inCart(p.id)
+                            ? "bg-green-600 text-white hover:bg-green-700"
+                            : "bg-primary text-primary-foreground hover:opacity-90"
+                        }`}
                       >
-                        Add to Cart
+                        {inCart(p.id) ? (
+                          <>
+                            <Check size={14} />
+                            <span>In your cart</span>
+                          </>
+                        ) : (
+                          "Add to Cart"
+                        )}
                       </button>
                     </td>
                   </tr>
