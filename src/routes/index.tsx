@@ -149,9 +149,19 @@ function Catalogue() {
                     <button
                       data-testid={`add-to-cart-${p.id}`}
                       onClick={() => addToCart(p)}
-                      className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:opacity-90"
+                      className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors ${
+                        inCart(p.id)
+                          ? "bg-green-600 text-white hover:bg-green-700"
+                          : "bg-primary text-primary-foreground hover:opacity-90"
+                      }`}
                     >
-                      Add to Cart
+                      {inCart(p.id) ? (
+                        <>
+                          <Check size={14} /> In your cart
+                        </>
+                      ) : (
+                        "Add to Cart"
+                      )}
                     </button>
                   </div>
                 </div>
