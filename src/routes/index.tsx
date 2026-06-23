@@ -10,6 +10,10 @@ export const Route = createFileRoute("/")({
       { title: "Catalogue — Oakline Furniture" },
       { name: "description", content: "Browse modern wardrobes, drawers, bookshelves, mudrooms and walk-in closets." },
     ],
+    // Add the links array right here for your favicon
+    links: [
+      { rel: "icon", type: "image/png", href: "/favicon.png" }
+    ],
   }),
   component: Catalogue,
 });
