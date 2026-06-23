@@ -157,7 +157,8 @@ function Catalogue() {
                     >
                       {inCart(p.id) ? (
                         <>
-                          <Check size={14} /> In your cart
+                          <Check size={14} />
+                          <span>In your cart</span>
                         </>
                       ) : (
                         "Add to Cart"
