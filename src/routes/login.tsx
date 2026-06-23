@@ -1,16 +1,19 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { z } from "zod";
 import { Header } from "@/components/Header";
 import { useShop } from "@/lib/shop-context";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Login — Oakline" }] }),
+  validateSearch: z.object({ redirect: z.string().optional() }),
   component: LoginPage,
 });
 
 function LoginPage() {
   const { login } = useShop();
   const navigate = useNavigate();
+  const { redirect } = Route.useSearch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -19,7 +22,7 @@ function LoginPage() {
     e.preventDefault();
     const err = login(email, password);
     if (err) return setError(err);
-    navigate({ to: "/" });
+    navigate({ to: redirect || "/" });
   };
 
   return (

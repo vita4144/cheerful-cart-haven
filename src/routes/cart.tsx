@@ -9,10 +9,18 @@ export const Route = createFileRoute("/cart")({
 });
 
 function CartPage() {
-  const { cart, removeFromCart, updateQty, cartTotal } = useShop();
+  const { cart, removeFromCart, updateQty, cartTotal, user } = useShop();
   const navigate = useNavigate();
   const tax = cartTotal * 0.1;
   const total = cartTotal + tax;
+
+  const handleCheckout = () => {
+    if (!user) {
+      navigate({ to: "/login", search: { redirect: "/checkout" } });
+      return;
+    }
+    navigate({ to: "/checkout" });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -78,7 +86,7 @@ function CartPage() {
               </dl>
               <button
                 data-testid="checkout-btn"
-                onClick={() => navigate({ to: "/checkout" })}
+                onClick={handleCheckout}
                 className="mt-6 w-full rounded-md bg-primary py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
               >
                 Proceed to Checkout
