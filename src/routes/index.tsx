@@ -21,7 +21,8 @@ type SortKey = "featured" | "price-asc" | "price-desc" | "name-asc" | "name-desc
 const CATEGORIES = Array.from(new Set(PRODUCTS.map((p) => p.category))).sort();
 
 function Catalogue() {
-  const { addToCart } = useShop();
+  const { addToCart, cart } = useShop();
+  const inCart = (id: number) => cart.some((i) => i.product.id === id);
   const [view, setView] = useState<"grid" | "list">("grid");
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState<string>("all");
