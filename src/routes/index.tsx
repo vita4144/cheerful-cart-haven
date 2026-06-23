@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Grid3x3, List } from "lucide-react";
+import { Check, Grid3x3, List } from "lucide-react";
 import { Header } from "@/components/Header";
 import { PRODUCTS, useShop } from "@/lib/shop-context";
 
