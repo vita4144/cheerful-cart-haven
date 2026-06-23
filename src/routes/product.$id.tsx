@@ -62,13 +62,20 @@ function ProductPage() {
               </div>
               <button
                 data-testid="detail-add-to-cart-btn"
-                onClick={() => {
-                  addToCart(product, qty);
-                  navigate({ to: "/cart" });
-                }}
-                className="rounded-md bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+                onClick={() => addToCart(product, qty)}
+                className={`inline-flex items-center gap-2 rounded-md px-6 py-2.5 text-sm font-medium transition-colors ${
+                  cart.some((i) => i.product.id === product.id)
+                    ? "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-primary text-primary-foreground hover:opacity-90"
+                }`}
               >
-                Add to Cart
+                {cart.some((i) => i.product.id === product.id) ? (
+                  <>
+                    <Check size={16} /> In your cart
+                  </>
+                ) : (
+                  "Add to Cart"
+                )}
               </button>
             </div>
           </div>
